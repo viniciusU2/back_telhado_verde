@@ -10,6 +10,17 @@ class LeituraCreate(BaseModel):
     valor: float
 
 
+class LeituraLoteItem(BaseModel):
+    tipo: str
+    id_sensor: int
+    valor: float
+
+
+class LeituraLoteCreate(BaseModel):
+    id_dispositivo: int
+    leituras: list[LeituraLoteItem]
+
+
 class FiltroLeitura(BaseModel):
     tipo: str
     data: Optional[str] = None

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.db.database import get_db
 from app.models.leitura import Leitura
-from app.schemas.leitura_schema import LeituraCreate
+from app.schemas.leitura_schema import LeituraCreate, LeituraLoteCreate
 
 router = APIRouter(prefix="/leitura", tags=["Leitura"])
 
@@ -20,6 +20,29 @@ def inserir_leitura(data: LeituraCreate, db: Session = Depends(get_db)):
     db.refresh(leitura)
 
     return {"status": "ok", "id_leitura": leitura.id}
+
+
+@router.post("/lote")
+def inserir_leituras_lote(data: LeituraLoteCreate, db: Session = Depends(get_db)):
+    leituras = [
+        Leitura(
+            tipo=item.tipo,
+            id_sensor=item.id_sensor,
+            id_dispositivo=data.id_dispositivo,
+            valor=item.valor,
+        )
+        for item in data.leituras
+    ]
+
+    db.add_all(leituras)
+    db.commit()
+
+    return {
+        "status": "ok",
+        "id_dispositivo": data.id_dispositivo,
+        "total_recebido": len(data.leituras),
+        "total_salvo": len(leituras),
+    }
 
 
 @router.get("/")
