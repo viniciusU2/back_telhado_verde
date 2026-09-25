@@ -1,43 +1,38 @@
-## Telhado Verde - Backend
+# Telhado Verde
 
-API de monitoramento desenvolvida com **FastAPI**.
+Monorepositório de monitoramento meteorológico com backend FastAPI e dashboard React/TypeScript.
 
-### Pré-requisitos
-* Python 3.13+
-* Poetry
-* Docker & Docker Compose
+## Estrutura
 
-### Instalação e Configuração
+- `backend/`: API existente, persistência de dispositivos e leituras.
+- `frontend/`: cadastro de estações, monitoramento e comparação com uma fonte INMET configurável.
 
-1. **Dependências:**
-   ```bash
-   poetry install
-   ```
+## Backend
 
-2. **Ambiente:**
-   Crie um arquivo `.env`:
-   ```env
-   DATABASE_URL=mysql+pymysql://root:root@localhost:3306/telhado_verde
-   ```
-
-3. **Banco de Dados:**
-   ```bash
-   docker compose up -d
-   poetry run alembic upgrade head
-   ```
-
-### Scripts e Execução
-
-* **Popular dados (Opcional):**
-  
 ```bash
-  poetry run python seed.py
-  ```
-
-* **Iniciar Servidor:**
-  ```bash
-  poetry run uvicorn app.main:app --reload
-  ```
-
-Acesse em: `http://localhost:8000`
+cd backend
+poetry install
+docker compose up -d
+poetry run alembic upgrade head
+poetry run uvicorn app.main:app --reload
 ```
+
+A API e sua documentação ficam em `http://localhost:8000`, `/docs`, `/redoc` e `/openapi.json`.
+
+## Frontend
+
+```bash
+cd frontend
+copy .env.example .env
+npm install
+npm run dev
+```
+
+Abra `http://localhost:5173`. Para validar e gerar a versão de produção:
+
+```bash
+npm run test
+npm run build
+```
+
+Consulte [`frontend/README.md`](frontend/README.md) para arquitetura, variáveis de ambiente e lacunas conhecidas do contrato da API.

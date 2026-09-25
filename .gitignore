@@ -1,62 +1,37 @@
-# 🔐 Ambiente virtual
-
-venv/
-env/
-.venv/
-
-# 🐍 Python
-
-**pycache**/
+# Python
+**/__pycache__/
 *.py[cod]
-*$py.class
-
-# 📦 Distribuição / build
-
-build/
-dist/
 *.egg-info/
-.eggs/
+.venv/
+venv/
+backend/venv/
 
-# 🔧 Logs
+# Node / Vite
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
 
-*.log
-
-# 🔑 Variáveis de ambiente
-
+# Ambiente e segredos (mantém exemplos versionáveis)
 .env
 .env.*
-tv/
+!.env.example
+!**/.env.example
 
-# 🧪 Testes / cobertura
-
+# Testes, logs e ferramentas
 .coverage
 htmlcov/
 .pytest_cache/
-
-# 🗄️ Banco de dados
-
-*.db
-*.sqlite3
-
-# 🧠 IDEs / editores
-
+coverage/
+*.log
 .vscode/
 .idea/
-
-# 🪟 Sistema operacional
-
 .DS_Store
 Thumbs.db
-
-# 📁 Arquivos temporários
-
 *.swp
 *.tmp
-
-# 🔥 Uvicorn / FastAPI
-
 *.pid
 
-# 📊 Migrations (opcional - depende do seu caso)
-
-# alembic/versions/
+# Bancos locais
+*.db
+*.sqlite3

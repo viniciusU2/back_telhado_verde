@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import dispositivo_routes, leitura_routes
+from app.api import dispositivo_routes, inmet_routes, leitura_routes
 
 app = FastAPI()
 
@@ -15,3 +15,4 @@ app.add_middleware(
 
 app.include_router(dispositivo_routes.router)
 app.include_router(leitura_routes.router)
+app.include_router(inmet_routes.router)

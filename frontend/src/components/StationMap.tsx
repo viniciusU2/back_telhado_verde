@@ -1,0 +1,18 @@
+import { ExternalLink, MapPin } from 'lucide-react'
+import type { ApiDispositivo } from '../types/api'
+import type { EstacaoINMET, ObservacaoMeteorologica } from '../types/weather'
+import { haversineDistanceKm } from '../utils/geo'
+import { formatValue, safeNumber } from '../utils/number'
+import { Badge, Button, Card } from './ui'
+
+export function StationMap({ own, inmet, inmetObservation }: { own?: ApiDispositivo; inmet?: EstacaoINMET; inmetObservation?: ObservacaoMeteorologica }) {
+  const inmetLat = safeNumber(inmet?.LATITUDE)
+  const inmetLon = safeNumber(inmet?.LONGITUDE)
+  const distance = safeNumber(inmet?.DISTANCIA_EM_KM) ?? haversineDistanceKm(own?.latitude, own?.longitude, inmetLat, inmetLon)
+  const hasBoth = own && inmetLat !== undefined && inmetLon !== undefined
+  const points = hasBoth ? projectPoints(own.latitude, own.longitude, inmetLat, inmetLon) : undefined
+  return <Card className="overflow-hidden"><div className="flex items-center justify-between border-b border-line p-5"><div><h3 className="font-semibold">Localização das estações</h3><p className="mt-1 text-xs text-slate-400">Distância {formatValue(distance)} km</p></div>{own && <a href={`https://www.openstreetmap.org/?mlat=${own.latitude}&mlon=${own.longitude}#map=12/${own.latitude}/${own.longitude}`} target="_blank" rel="noreferrer"><Button className="bg-slate-100 text-slate-600"><ExternalLink size={15} />Abrir mapa</Button></a>}</div><div className="relative h-72 overflow-hidden bg-[#eaf1ed]" role="img" aria-label="Mapa esquemático das estações"><div className="absolute inset-0 opacity-40" style={{ backgroundImage: 'linear-gradient(#cad9d1 1px, transparent 1px), linear-gradient(90deg, #cad9d1 1px, transparent 1px)', backgroundSize: '36px 36px' }} />{points ? <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><line x1={points.own.x} y1={points.own.y} x2={points.inmet.x} y2={points.inmet.y} stroke="#73857d" strokeWidth=".7" strokeDasharray="2 2" vectorEffect="non-scaling-stroke" /></svg> : null}{points && own && <><Marker x={points.own.x} y={points.own.y} label={own.nome} badge="PRÓPRIA" color="bg-brand-600" /><Marker x={points.inmet.x} y={points.inmet.y} label={inmet?.NOME || inmetObservation?.stationName || 'INMET'} badge="INMET" color="bg-skybrand" /></>}{!points && <div className="absolute inset-0 grid place-items-center text-center text-sm text-slate-500"><div><MapPin className="mx-auto mb-2" /><p>Coordenadas de ambas as estações são necessárias.</p></div></div>}</div></Card>
+}
+
+function projectPoints(lat1: number, lon1: number, lat2: number, lon2: number) { const minLat = Math.min(lat1, lat2), maxLat = Math.max(lat1, lat2), minLon = Math.min(lon1, lon2), maxLon = Math.max(lon1, lon2); const latSpan = maxLat - minLat || 1, lonSpan = maxLon - minLon || 1; return { own: { x: 18 + ((lon1 - minLon) / lonSpan) * 64, y: 82 - ((lat1 - minLat) / latSpan) * 64 }, inmet: { x: 18 + ((lon2 - minLon) / lonSpan) * 64, y: 82 - ((lat2 - minLat) / latSpan) * 64 } } }
+function Marker({ x, y, label, badge, color }: { x: number; y: number; label: string; badge: string; color: string }) { return <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${x}%`, top: `${y}%` }}><div className={`mx-auto grid h-9 w-9 place-items-center rounded-full border-4 border-white text-white shadow-lg ${color}`}><MapPin size={17} /></div><div className="mt-1.5 whitespace-nowrap rounded-lg bg-white/95 px-2.5 py-1.5 text-center shadow"><p className="text-[10px] font-bold">{label}</p><Badge tone={badge === 'INMET' ? 'blue' : 'green'}>{badge}</Badge></div></div> }
